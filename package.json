@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": ""
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Shestak2039/shop-be/issues"
   },
-  "homepage": "https://github.com/Shestak2039/shop-be#readme"
+  "homepage": "https://github.com/Shestak2039/shop-be#readme",
+  "devDependencies": {
+    "jest": "^26.6.1"
+  }
 }
