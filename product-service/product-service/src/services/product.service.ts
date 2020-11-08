@@ -1,17 +1,23 @@
 import { ProductModel } from '../models/product.model';
-import { productsList } from '../data/products-list';
+import productInstance from '../models/product';
 
 export class ProductService {
-    productsList: ProductModel[] = productsList;
-
     async findById(id: string) {
-        const product = await this.productsList.find(productData => productData.id === id);
+        const product = await productInstance.findProductById(id);
 
         return product;
     }
 
     async findAll() {
-        return this.productsList;
+        const products = await productInstance.getAllProducts();
+
+        return products;
+    }
+
+    async createProduct(product: ProductModel) {
+        const createdProduct = await productInstance.createProduct(product);
+
+        return createdProduct;
     }
 }
 
