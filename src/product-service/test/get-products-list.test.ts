@@ -1,7 +1,7 @@
 import { getProductsList } from '../src/lambda-functions/get-products-list';
 import productService from '../src/services/product.service';
 import { ProductModel } from '../src/models/product.model';
-import { headers } from '../src/constants/headers';
+import { headers } from '../../../constants/headers';
 
 describe('getProductsList.handler', () => {
    test('should return productsList', async () => {
@@ -15,6 +15,8 @@ describe('getProductsList.handler', () => {
                imageUrl: "https://upload.wikimedia.org/wikipedia/ru/thumb/c/c8/GTAV_Official_Cover_Art.jpg/274px-GTAV_Official_Cover_Art.jpg"
            }
        ];
+
+       // @ts-ignore
        productService.productsList = mockProducts;
 
        // @ts-ignore
