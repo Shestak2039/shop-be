@@ -19,12 +19,26 @@ const serverlessConfiguration: Serverless = {
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
+    region: 'eu-west-1',
+    stage: 'dev',
     apiGateway: {
       minimumCompressionSize: 1024,
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: 's3:ListBucket',
+        Resource: 'arn:aws:s3:::task-5',
+      },
+      {
+        Effect: 'Allow',
+        Action: 's3:*',
+        Resource: 'arn:aws:s3:::task-5/*',
+      },
+    ],
   },
   functions: {
     importProductsFile: {
@@ -42,6 +56,22 @@ const serverlessConfiguration: Serverless = {
               }
             },
             cors: true,
+          }
+        }
+      ]
+    },
+    importFileParser: {
+      handler: 'handler.importFileParser',
+      events: [
+        {
+          s3: {
+            event: 's3:ObjectCreated:*',
+            bucket: 'task-5',
+            rules: [{
+                prefix: 'uploaded/',
+                suffix: ''
+            }],
+            existing: true
           }
         }
       ]
