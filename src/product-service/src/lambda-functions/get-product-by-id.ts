@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import productService from '../services/product.service';
-import { headers } from '../constants/headers';
+import { headers } from '../../../../constants/headers';
 
 export const getProductById: APIGatewayProxyHandler = async (event, _context) => {
     console.log(`httpMethod:${event.httpMethod}; path: ${event.path}; pathParameters: ${event.pathParameters};`);
@@ -28,6 +28,7 @@ export const getProductById: APIGatewayProxyHandler = async (event, _context) =>
         console.log(e);
 
         return {
+            headers,
             statusCode: 500,
             body: JSON.stringify({
                 errorMessage: 'Internal Server Error'

@@ -19,18 +19,18 @@ export const importProductsFile: APIGatewayProxyHandler = async (event) => {
       };
     }
 
-    const s3 = new AWS.S3({region: region});
+    const s3 = new AWS.S3({region: region, signatureVersion: 'v4'});
     const url = await s3.getSignedUrlPromise('putObject', {
       Bucket: bucketName,
       Key: `uploaded/${fileName}`,
-      Expires: 120,
+      Expires: 60,
       ContentType: 'text/csv',
     });
 
     return {
       headers,
       statusCode: 200,
-      body: JSON.stringify(url)
+      body: url
     };
   } catch (e) {
     console.log(e);
