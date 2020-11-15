@@ -4,6 +4,8 @@ import productService from '../services/product.service';
 import { headers } from '../constants/headers';
 
 export const getProductById: APIGatewayProxyHandler = async (event, _context) => {
+    console.log(`httpMethod:${event.httpMethod}; path: ${event.path}; pathParameters: ${event.pathParameters};`);
+
     try {
         const { id } = event.pathParameters;
 
@@ -12,7 +14,7 @@ export const getProductById: APIGatewayProxyHandler = async (event, _context) =>
         if (!product) {
             return {
                 headers,
-                statusCode: 204,
+                statusCode: 404,
                 body: JSON.stringify({errorMessage: 'Product not found'})
             }
         }
