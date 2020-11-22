@@ -2,9 +2,8 @@
 node_modules
 jspm_packages
 
-.env
 # Serverless directories
 .serverless
 
-.idea
-.vscode
+# Webpack directories
+.webpack

@@ -1,7 +1,7 @@
 import { getProductById } from '../src/lambda-functions/get-product-by-id';
 import createEvent from '@serverless/event-mocks/dist';
 import productService from '../src/services/product.service';
-import { headers } from '../src/constants/headers';
+import { headers } from '../../../constants/headers';
 
 describe('getProductById.handler', () => {
     test('should return correct product', async () => {
@@ -19,10 +19,6 @@ describe('getProductById.handler', () => {
            title: "Grand Theft Auto V",
            imageUrl: "https://upload.wikimedia.org/wikipedia/ru/thumb/c/c8/GTAV_Official_Cover_Art.jpg/274px-GTAV_Official_Cover_Art.jpg"
        };
-
-       const mockProducts = [mockProduct];
-
-       productService.productsList = mockProducts;
 
        // @ts-ignore
         return expect(await getProductById(mockEvent)).toEqual({
@@ -49,6 +45,7 @@ describe('getProductById.handler', () => {
 
         const mockProducts = [mockProduct];
 
+        // @ts-ignore
         productService.productsList = mockProducts;
 
         // @ts-ignore
