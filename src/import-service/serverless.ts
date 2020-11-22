@@ -15,7 +15,7 @@ const serverlessConfiguration: Serverless = {
     }
   },
   // Add the serverless-webpack plugin
-  plugins: ['serverless-webpack'],
+  plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
@@ -26,6 +26,7 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_URL: '${cf:product-service-${self:provider.stage}.SQSUrl}'
     },
     iamRoleStatements: [
       {
@@ -38,7 +39,12 @@ const serverlessConfiguration: Serverless = {
         Action: 's3:*',
         Resource: 'arn:aws:s3:::task-5/*',
       },
-    ],
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: '${cf:product-service-${self:provider.stage}.SQSArn}',
+      },
+    ]
   },
   functions: {
     importProductsFile: {

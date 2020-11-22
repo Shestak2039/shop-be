@@ -8,6 +8,7 @@ import { bucketName, region } from '../constants/constants';
 export const importFileParser = async (event: S3Event) => {
   try {
     const s3 = new AWS.S3({region: region});
+    const sqs = new AWS.SQS({region: region});
 
     for (let record of event.Records) {
       const { key } = record.s3.object;
@@ -18,7 +19,19 @@ export const importFileParser = async (event: S3Event) => {
         })
           .createReadStream()
           .pipe(csv())
-          .on('data', console.log)
+          .on('data', (data) => {
+            console.log('data', data)
+            sqs.sendMessage({
+              QueueUrl: process.env.SQS_URL,
+              MessageBody: JSON.stringify(data)
+            }, (err, data) => {
+              if (err) {
+                console.log('Error', err);
+                return;
+              }
+              console.log('Success', data)
+            })
+          })
           .on('end', async() => {
             await s3.copyObject({
               Bucket: bucketName,
