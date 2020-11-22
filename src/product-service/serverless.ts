@@ -86,8 +86,31 @@ const serverlessConfiguration = {
       minimumCompressionSize: 1024,
     },
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SNS_ARN: {
+        Ref: 'SNSCreateProductTopic',
+      },
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: [
+          {
+            'Fn::GetAtt': ['SQSCatalogItemsQueue', 'Arn'],
+          },
+        ],
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sns:*',
+        Resource: [
+          {
+            Ref: 'SNSCreateProductTopic',
+          },
+        ],
+      },
+    ],
   },
   functions: {
     products: {
@@ -152,6 +175,19 @@ const serverlessConfiguration = {
           }
         }
       ]
+    },
+    catalogBatchProcess: {
+      handler: 'handler.catalogBatchProcess',
+      events: [
+        {
+          sqs: {
+            batchSize: 5,
+            arn: {
+              'Fn::GetAtt': ['SQSCatalogItemsQueue', 'Arn'],
+            }
+          }
+        }
+      ]
     }
   },
   resources: {
@@ -166,7 +202,57 @@ const serverlessConfiguration = {
           ValidateRequestBody: true,
           ValidateRequestParameters: false
         }
+      },
+      SQSCatalogItemsQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalogItemsQueue'
+        }
+      },
+      SNSCreateProductTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'productTopic'
+        }
+      },
+      SNSTopicSubscriptionPriceMore: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: '${self:provider.environment.SNS_EMAIL_FIRST}',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSCreateProductTopic',
+          },
+          FilterPolicy: {
+            filter: ['more']
+          },
+        },
+      },
+      SNSTopicSubscriptionPriceLess: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: '${self:provider.environment.SNS_EMAIL_SECOND}',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSCreateProductTopic',
+          },
+          FilterPolicy: {
+            filter: ['less']
+          },
+        },
       }
+    },
+    Outputs: {
+      SQSUrl: {
+        Value: {
+          Ref: 'SQSCatalogItemsQueue'
+        }
+      },
+      SQSArn: {
+        Value: {
+          'Fn::GetAtt': ['SQSCatalogItemsQueue', 'Arn']
+        },
+      },
     }
   }
 };
