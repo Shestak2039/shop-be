@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Shestak2039/shop-be#readme",
   "devDependencies": {
+    "aws-sdk-mock": "^5.1.0",
     "jest": "^26.6.1"
   },
   "dependencies": {

@@ -67,7 +67,10 @@ class Product {
 
             await client.query('COMMIT');
 
-            return createdProduct.rows[0].id;
+            return {
+                id: createdProduct.rows[0].id,
+                price: product.price
+            };
         } catch (e) {
             console.log(e);
 
