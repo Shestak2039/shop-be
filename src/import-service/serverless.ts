@@ -62,6 +62,13 @@ const serverlessConfiguration: Serverless = {
               }
             },
             cors: true,
+            authorizer: {
+              name: 'tokenBasicAuthorizer',
+              arn: 'arn:aws:lambda:eu-west-1:549933849673:function:authorization-service-dev-basicAuthorizer',
+              resultTtlInSeconds: 0,
+              identitySource: 'method.request.header.Authorization',
+              type: 'token'
+            }
           }
         }
       ]
@@ -81,6 +88,23 @@ const serverlessConfiguration: Serverless = {
           }
         }
       ]
+    }
+  },
+  resources: {
+    Resources: {
+      GatewayResponseDefault400: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'DEFAULT_4XX',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          }
+        }
+      }
     }
   }
 };
